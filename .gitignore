@@ -4,5 +4,5 @@
 *.tfstate.*
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
-key.json
+ansible/inventory/key.json
 *.backup
