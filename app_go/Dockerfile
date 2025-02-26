@@ -1,12 +1,13 @@
 FROM golang:1.12-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN go build -o go-app
+RUN CGO_ENABLED=0 go build -o go-app
 
-FROM debian:bullseye-slim
+FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /app/go-app .
-RUN adduser nonroot
+RUN apk add --no-cache tzdata
+RUN adduser -D nonroot
 USER nonroot
 EXPOSE 8080
 
