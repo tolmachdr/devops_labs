@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{ include "common.labels" . | nindent 4 }}
+        {{- include "python-app.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -35,6 +35,17 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
+          env:
+            - name: MY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: MY_USER
+            - name: MY_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: MY_PASS
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
