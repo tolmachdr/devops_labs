@@ -38,7 +38,7 @@ def get_time():
     increment_visits()
     timezone = pytz.timezone("Europe/Moscow")
     time = datetime.now(timezone)
-    return {"moscow_time": time}
+    return {"moscow_time": time.isoformat()}
 
 
 @app.get("/metrics")
