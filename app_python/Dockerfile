@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN groupadd -r nonroot_group \
     && useradd -r -m -g nonroot_group nonroot \
     && mkdir -p /app/data \
-    && chown -R nonroot:nonroot_group /app/data \
+    && chown -R root:nonroot_group /app/data \
     && chmod -R 775 /app/data
 
 USER nonroot
