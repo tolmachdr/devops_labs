@@ -4,6 +4,7 @@ networks:
 volumes:
   loki_data:
   prometheus_data:
+  visits_data:  # Новый volume для хранения visits.txt
 
 services:
   loki:
@@ -92,11 +93,13 @@ services:
           memory: 256M
 
   py_app:
-    image: dtolmach/python-app-monitor:latest
+    image: dtolmach/python-app-visit:latest
     ports:
       - "8081:8000"
     networks:
       - monitoring
+    volumes:
+      - visits_data:/app/data
     deploy:
       resources:
         limits:
