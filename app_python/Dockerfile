@@ -6,11 +6,6 @@ COPY requirements.txt main.py ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN useradd nonroot \
-    && mkdir -p /app/data \
-    && chown -R nonroot:nonroot /app/data \
-    && chmod -R 775 /app/data
-
 USER nonroot
 
 EXPOSE 8000
