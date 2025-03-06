@@ -35,7 +35,7 @@ def increment_visits():
 
 @app.get("/")
 def get_time():
-    visits = increment_visits()
+    increment_visits()
     timezone = pytz.timezone("Europe/Moscow")
     time = datetime.now(timezone)
     return {"moscow_time": time}
