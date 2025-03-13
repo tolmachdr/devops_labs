@@ -1,16 +1,31 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "go-app.fullname" . }}
   labels:
-    {{ include "common.labels" . | nindent 4 }}
+    {{- include "go-app.labels" . | nindent 4 }}
 spec:
+  serviceName:  {{ include "go-app.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 1
   selector:
     matchLabels:
       {{- include "go-app.selectorLabels" . | nindent 6 }}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.storage.name }}
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: {{ .Values.storage.size }}
+
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +33,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{ include "common.labels" . | nindent 4 }}
+        {{- include "go-app.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -56,14 +71,13 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            - name: py-app
+              mountPath: /data
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: py-app
+          persistentVolumeClaim:
+            claimName: {{ .Values.storage.name }}-{{ include "go-app.fullname" . }}-0
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
